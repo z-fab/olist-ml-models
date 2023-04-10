@@ -1,33 +1,30 @@
 -- Databricks notebook source
-SELECT DATE(dtPedido) as dtPedido,
-       COUNT(*) as qtdPedido
-       
-FROM silver.olist.pedido
+WITH tb_pedidos AS (
 
-WHERE dtPedido < '2018-01-01'
-AND dtPedido >= add_months('2018-01-01', -6)
-
-GROUP BY 1
-ORDER BY 1
-
--- COMMAND ----------
-
-WITH tb_join AS (
-
-  SELECT t2.*, 
-         t3.idVendedor
+  SELECT DISTINCT
+         t1.idPedido,
+         t2.idVendedor
 
   FROM silver.olist.pedido AS t1
 
-  LEFT JOIN silver.olist.pagamento_pedido AS t2
+  LEFT JOIN silver.olist.item_pedido as t2
   ON t1.idPedido = t2.idPedido
 
-  LEFT JOIN silver.olist.item_pedido AS t3
-  ON t1.idPedido = t3.idPedido
-
   WHERE t1.dtPedido < '2018-01-01'
-  AND t1.dtPedido >= add_months('2018-01-01', -6)
-  AND t3.idVendedor IS NOT NULL
+    AND t1.dtPedido >= add_months('2018-01-01', -6)
+    AND t2.idVendedor IS NOT NULL
+
+),
+
+tb_join AS (
+
+  SELECT t1.idVendedor,
+         t2.*
+         
+  FROM tb_pedidos AS t1
+
+  LEFT JOIN silver.olist.pagamento_pedido AS t2
+  ON t1.idPedido = t2.idPedido
   
 ),
 
@@ -69,7 +66,7 @@ SUM(CASE WHEN descTipoPagamento = 'debit_card' THEN vlPedidoMeioPagamento ELSE 0
 
 FROM tb_group
 
-GROUP BY 1
+GROUP BY idVendedor
 
 -- COMMAND ----------
 
