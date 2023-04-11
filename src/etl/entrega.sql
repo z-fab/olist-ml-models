@@ -1,4 +1,7 @@
 -- Databricks notebook source
+-- DROP TABLE IF EXISTS silver.analytics.fs_vendedor_entrega;
+-- CREATE TABLE silver.analytics.fs_vendedor_entrega
+
 WITH tb_pedido AS (
 
   SELECT t1.idPedido,
@@ -29,7 +32,8 @@ WITH tb_pedido AS (
 
 )
 
-SELECT idVendedor,
+SELECT '2018-01-01' AS dtReference,
+       idVendedor,
        COUNT(DISTINCT CASE WHEN descSituacao = 'canceled' THEN idPedido END) / COUNT(idPedido) AS pctPedidoCancelado,
 
        COUNT(DISTINCT 
@@ -49,7 +53,7 @@ SELECT idVendedor,
 
 FROM tb_pedido
 
-GROUP BY idVendedor
+GROUP BY 1, 2
 
 -- COMMAND ----------
 
