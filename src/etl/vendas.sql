@@ -1,4 +1,5 @@
--- Databricks notebook source
+-- CREATE TABLE silver.analytics.fs_vendedor_venda
+
 WITH tb_pedido_item AS (
 
   SELECT t2.*,
@@ -9,8 +10,8 @@ WITH tb_pedido_item AS (
   LEFT JOIN silver.olist.item_pedido AS t2
   ON t1.idPedido = t2.idPedido
 
-  WHERE t1.dtPedido < '2018-01-01'
-  AND t1.dtPedido >= add_months(t1.dtPedido, -6)
+  WHERE t1.dtPedido < '{date}'
+  AND t1.dtPedido >= add_months('{date}', -6)
   AND t2.idVendedor IS NOT NULL
 
 ),
@@ -28,7 +29,7 @@ tb_summary AS (
         COUNT(idProduto) AS qtdDItensPedidos,
 
         -- Dias sem vender (recência)
-        DATEDIFF('2018-01-01', MAX(dtPedido)) AS qtdRecencia,
+        DATEDIFF('{date}', MAX(dtPedido)) AS qtdRecencia,
 
         -- Ticket Médio
         SUM(vlPreco) / COUNT(DISTINCT idPedido) AS avgTicket,
@@ -84,14 +85,14 @@ tb_life AS (
         -- LTV
         SUM(vlPreco) AS ltv,
         -- Dias desde a 1ª venda
-        MAX(DATEDIFF('2018-01-01', t1.dtPedido)) AS qtdDiasBase
+        MAX(DATEDIFF('{date}', t1.dtPedido)) AS qtdDiasBase
           
   FROM silver.olist.pedido AS t1
 
   LEFT JOIN silver.olist.item_pedido AS t2
   ON t1.idPedido = t2.idPedido
 
-  WHERE t1.dtPedido < '2018-01-01'
+  WHERE t1.dtPedido < '{date}'
   AND t2.idVendedor IS NOT NULL
 
   GROUP BY t2.idVendedor
@@ -129,7 +130,7 @@ tb_intervalo AS (
 
 )
 
-SELECT '2018-01-01' AS dtReference,
+SELECT '{date}' AS dtReference,
        t1.*,
        t2.minValorPedido,
        t2.maxValorPedido,
@@ -147,9 +148,4 @@ ON t1.idVendedor = t3.idVendedor
 
 LEFT JOIN tb_intervalo AS t4
 ON t1.idVendedor = t4.idVendedor
-
-
-
--- COMMAND ----------
-
 

@@ -1,4 +1,7 @@
 -- Databricks notebook source
+-- DROP TABLE IF EXISTS silver.analytics.fs_vendedor_entrega;
+-- CREATE TABLE silver.analytics.fs_vendedor_entrega
+
 WITH tb_pedido AS (
 
   SELECT t1.idPedido,
@@ -50,7 +53,7 @@ SELECT '2018-01-01' AS dtReference,
 
 FROM tb_pedido
 
-GROUP BY idVendedor
+GROUP BY 1, 2
 
 -- COMMAND ----------
 
