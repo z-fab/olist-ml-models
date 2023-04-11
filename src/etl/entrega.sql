@@ -29,7 +29,8 @@ WITH tb_pedido AS (
 
 )
 
-SELECT idVendedor,
+SELECT '2018-01-01' AS dtReference,
+       idVendedor,
        COUNT(DISTINCT CASE WHEN descSituacao = 'canceled' THEN idPedido END) / COUNT(idPedido) AS pctPedidoCancelado,
 
        COUNT(DISTINCT 
