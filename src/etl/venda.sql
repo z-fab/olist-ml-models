@@ -129,7 +129,8 @@ tb_intervalo AS (
 
 )
 
-SELECT t1.*,
+SELECT '2018-01-01' AS dtReference,
+       t1.*,
        t2.minValorPedido,
        t2.maxValorPedido,
        t3.ltv,
